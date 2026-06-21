@@ -1,0 +1,114 @@
+=========================
+DELETE Statements
+=========================
+
+
+============================================================
+(a) Delete all LEAVE records older than 2 years from today
+============================================================
+
+------------------------------------------------------------
+Preview records before deletion
+------------------------------------------------------------
+
+SELECT
+    leave_ID,
+    emp_ID,
+    start_date,
+    end_date,
+    reason
+FROM leave
+WHERE end_date < ADD_MONTHS(SYSDATE, -24);
+
+
+------------------------------------------------------------
+Delete old leave records
+------------------------------------------------------------
+
+DELETE FROM leave
+WHERE end_date < ADD_MONTHS(SYSDATE, -24);
+
+
+------------------------------------------------------------
+Verify result with SELECT COUNT(*)
+------------------------------------------------------------
+
+SELECT COUNT(*) AS remaining_leave_records
+FROM leave;
+
+
+============================================================
+(c) Preview QUALIFICATION records that would be deleted
+============================================================
+
+SELECT
+    q.qual_ID,
+    q.emp_ID,
+    q.position_name,
+    q.date_in
+FROM qualification q
+WHERE NOT EXISTS
+(
+    SELECT 1
+    FROM employee e
+    WHERE e.emp_ID = q.emp_ID
+);
+
+
+============================================================
+Delete child records first from QUALIFICATION_REQUIREMENTS
+============================================================
+
+DELETE FROM qualification_requirements qr
+WHERE qr.qual_ID IN
+(
+    SELECT q.qual_ID
+    FROM qualification q
+    WHERE NOT EXISTS
+    (
+        SELECT 1
+        FROM employee e
+        WHERE e.emp_ID = q.emp_ID
+    )
+);
+
+
+------------------------------------------------------------
+Verify qualification_requirements after delete
+------------------------------------------------------------
+
+SELECT COUNT(*) AS remaining_qualification_requirements
+FROM qualification_requirements;
+
+
+============================================================
+(b) Delete QUALIFICATION records for employees who no longer exist
+============================================================
+
+DELETE FROM qualification q
+WHERE NOT EXISTS
+(
+    SELECT 1
+    FROM employee e
+    WHERE e.emp_ID = q.emp_ID
+);
+
+
+------------------------------------------------------------
+Verify result with SELECT COUNT(*)
+------------------------------------------------------------
+
+SELECT COUNT(*) AS remaining_qualification_records
+FROM qualification;
+
+
+
+
+============================================================
+Simple explanation
+============================================================
+
+1. Old leave records are found using ADD_MONTHS(SYSDATE, -24).
+2. The preview SELECT lets you check records before deleting.
+3. Orphan qualifications should not normally exist because of the foreign key.
+4. Because qualification_requirements depends on qualification, delete child rows first.

@@ -1,0 +1,88 @@
+======================
+SELECT Queries
+======================
+
+
+============================================================
+(a) List all employees whose age is between 25 and 40,
+    ordered by last name ascending
+============================================================
+
+SELECT
+    emp_ID,
+    fname,
+    lname,
+    gender,
+    age,
+    emp_email,
+    city,
+    phone_number
+FROM employee
+WHERE age BETWEEN 25 AND 40
+ORDER BY lname ASC;
+
+
+============================================================
+(b) Retrieve all payroll records where total_amount exceeds 5000,
+    showing employee name and department
+============================================================
+
+SELECT
+    p.payroll_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    jd.dept_name,
+    p.payroll_date,
+    p.total_amount
+FROM payroll p
+JOIN employee e
+    ON p.emp_ID = e.emp_ID
+JOIN job_department jd
+    ON p.job_ID = jd.job_ID
+WHERE p.total_amount > 5000
+ORDER BY p.total_amount DESC;
+
+
+============================================================
+(c) Find all employees who have taken leave with reason
+    containing the word 'sick' case-insensitive
+============================================================
+
+SELECT
+    e.emp_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    l.leave_ID,
+    l.start_date,
+    l.end_date,
+    l.reason
+FROM employee e
+JOIN leave l
+    ON e.emp_ID = l.emp_ID
+WHERE LOWER(l.reason) LIKE '%sick%'
+ORDER BY l.start_date;
+
+
+============================================================
+(d) List all departments that have no employees assigned
+    using NOT EXISTS
+============================================================
+
+
+SELECT
+    jd.job_ID,
+    jd.dept_name,
+    jd.job_dept
+FROM job_department jd
+LEFT JOIN employee e
+    ON jd.job_ID = e.job_ID
+WHERE e.emp_ID IS NULL
+ORDER BY jd.dept_name;
+
+
+============================================================
+Simple explanation
+============================================================
+
+1. BETWEEN is used to filter age from 25 to 40.
+2. JOIN is used to combine payroll, employee, and department information.
+3. LOWER() makes the sick leave search case-insensitive.
+4. LEFT JOIN can be used to find departments without employees.

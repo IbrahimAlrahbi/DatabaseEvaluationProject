@@ -1,0 +1,68 @@
+==============
+JOIN Task 1
+==============
+
+
+
+
+============================================================
+Task 1
+============================================================
+
+Write a query using INNER JOINs to retrieve a complete employee profile.
+
+Columns:
+- emp_ID
+- full name
+- department name
+- job title from QUALIFICATION
+- salary amount
+- latest leave date
+
+Filter:
+Only employees who have both:
+- a payroll record
+- a qualification record
+
+
+============================================================
+Query
+============================================================
+
+SELECT
+    e.emp_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    jd.dept_name,
+    q.position_name AS job_title,
+    sb.amount AS salary_amount,
+    MAX(l.end_date) AS latest_leave_date
+FROM employee e
+INNER JOIN job_department jd
+    ON e.job_ID = jd.job_ID
+INNER JOIN salary_bonus sb
+    ON e.salary_ID = sb.salary_ID
+INNER JOIN qualification q
+    ON e.emp_ID = q.emp_ID
+INNER JOIN payroll p
+    ON e.emp_ID = p.emp_ID
+INNER JOIN leave l
+    ON e.emp_ID = l.emp_ID
+GROUP BY
+    e.emp_ID,
+    e.fname,
+    e.lname,
+    jd.dept_name,
+    q.position_name,
+    sb.amount
+ORDER BY e.emp_ID;
+
+
+
+============================================================
+Simple explanation
+============================================================
+1. INNER JOIN returns only matching records.
+2. Joining PAYROLL ensures the employee has payroll.
+3. Joining QUALIFICATION ensures the employee has a qualification.
+4. MAX(l.end_date) gives the latest leave date.
+5. GROUP BY is needed because MAX() is used.

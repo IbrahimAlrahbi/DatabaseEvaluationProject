@@ -1,0 +1,57 @@
+Revised Aggregation Task 2 - GROUP BY with HAVING
+=================================================
+
+
+
+
+============================================================
+(a) List departments where the average employee age exceeds 30
+============================================================
+
+SELECT
+    jd.dept_name,
+    ROUND(AVG(e.age), 2) AS average_employee_age
+FROM job_department jd
+JOIN employee e
+    ON jd.job_ID = e.job_ID
+GROUP BY jd.dept_name
+HAVING AVG(e.age) > 30
+ORDER BY average_employee_age DESC;
+
+
+============================================================
+(b) Show all job titles where more than 2 employees
+    share that qualification position
+============================================================
+
+SELECT
+    q.position_name,
+    COUNT(q.emp_ID) AS total_employees
+FROM qualification q
+GROUP BY q.position_name
+HAVING COUNT(q.emp_ID) > 2
+ORDER BY total_employees DESC;
+
+
+============================================================
+(c) Find months from PAYROLL.payroll_date where the total
+    payroll amount exceeds 20,000
+============================================================
+
+SELECT
+    TO_CHAR(TRUNC(payroll_date, 'MM'), 'YYYY-MM') AS payroll_month,
+    SUM(total_amount) AS total_monthly_payroll
+FROM payroll
+GROUP BY TRUNC(payroll_date, 'MM')
+HAVING SUM(total_amount) > 20000
+ORDER BY TRUNC(payroll_date, 'MM');
+
+
+============================================================
+Simple explanation
+============================================================
+
+1. GROUP BY groups rows into categories.
+2. HAVING filters the result after grouping.
+3. WHERE filters rows before grouping.
+4. TRUNC(payroll_date, 'MM') groups payroll by month.

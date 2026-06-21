@@ -1,0 +1,164 @@
+=========
+Views
+=========
+
+
+
+
+============================================================
+VIEW TASK 1
+============================================================
+
+Create a view named VW_EMPLOYEE_SUMMARY that returns:
+- emp_ID
+- full name
+- gender
+- age
+- department name
+- job title from QUALIFICATION
+
+
+------------------------------------------------------------
+Create View: VW_EMPLOYEE_SUMMARY
+------------------------------------------------------------
+
+CREATE OR REPLACE VIEW VW_EMPLOYEE_SUMMARY AS
+SELECT
+    e.emp_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    e.gender,
+    e.age,
+    jd.dept_name,
+    q.position_name AS job_title
+FROM employee e
+JOIN job_department jd
+    ON e.job_ID = jd.job_ID
+JOIN qualification q
+    ON e.emp_ID = q.emp_ID;
+
+
+------------------------------------------------------------
+(a) Query the view to list all female employees over 30
+------------------------------------------------------------
+
+SELECT
+    emp_ID,
+    full_name,
+    gender,
+    age,
+    dept_name,
+    job_title
+FROM VW_EMPLOYEE_SUMMARY
+WHERE gender = 'F'
+  AND age > 30
+ORDER BY full_name;
+
+
+------------------------------------------------------------
+(b) Try to INSERT a row through this view
+------------------------------------------------------------
+
+INSERT INTO VW_EMPLOYEE_SUMMARY
+(
+    emp_ID,
+    full_name,
+    gender,
+    age,
+    dept_name,
+    job_title
+)
+VALUES
+(
+    999,
+    'Test Employee',
+    'F',
+    31,
+    'HR',
+    'HR Officer'
+);
+
+
+
+-- error:
+
+Error at Command Line : 30 Column : 5
+Error report -
+SQL Error: ORA-01779: cannot modify a column which maps to a non key-preserved table
+
+https://docs.oracle.com/error-help/db/ora-01779/01779. 00000 -  “cannot modify a column which maps to a non key-preserved table”
+*Cause:    An attempt was made to insert or update columns of a join view which
+           map to a non-key-preserved table.
+*Action:   Modify the underlying base tables directly.
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-01779/
+
+
+============================================================
+VIEW TASK 2
+============================================================
+
+Create a view named VW_PAYROLL_DASHBOARD that returns:
+- payroll_ID
+- employee full name
+- department
+- salary amount
+- bonus
+- leave reason
+- payroll date
+- total_amount
+
+
+------------------------------------------------------------
+Create View: VW_PAYROLL_DASHBOARD
+------------------------------------------------------------
+
+CREATE OR REPLACE VIEW VW_PAYROLL_DASHBOARD AS
+SELECT
+    p.payroll_ID,
+    e.fname || ' ' || e.lname AS employee_full_name,
+    jd.dept_name AS department,
+    sb.amount AS salary_amount,
+    sb.bonus,
+    l.reason AS leave_reason,
+    p.payroll_date,
+    p.total_amount
+FROM payroll p
+JOIN employee e
+    ON p.emp_ID = e.emp_ID
+JOIN job_department jd
+    ON p.job_ID = jd.job_ID
+JOIN salary_bonus sb
+    ON p.salary_ID = sb.salary_ID
+LEFT JOIN leave l
+    ON e.emp_ID = l.emp_ID;
+
+
+------------------------------------------------------------
+Query top 5 payroll records by total_amount
+------------------------------------------------------------
+
+
+SELECT
+    payroll_ID,
+    employee_full_name,
+    department,
+    salary_amount,
+    bonus,
+    leave_reason,
+    payroll_date,
+    total_amount
+FROM VW_PAYROLL_DASHBOARD
+ORDER BY total_amount DESC
+FETCH FIRST 5 ROWS ONLY;
+
+
+
+
+============================================================
+Simple explanation
+============================================================
+1. Views save SELECT queries as reusable database objects.
+2. VW_EMPLOYEE_SUMMARY gives a simple employee summary.
+3. VW_PAYROLL_DASHBOARD gives payroll information in one place.
+4. Complex views with calculated columns are not usually insertable.
