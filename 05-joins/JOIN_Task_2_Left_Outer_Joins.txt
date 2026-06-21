@@ -1,0 +1,48 @@
+=============
+JOIN Task 2 
+=============
+
+
+
+
+============================================================
+(a) List all employees who have never taken any leave
+============================================================
+
+SELECT
+    e.emp_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    jd.dept_name
+FROM employee e
+LEFT OUTER JOIN leave l
+    ON e.emp_ID = l.emp_ID
+LEFT OUTER JOIN job_department jd
+    ON e.job_ID = jd.job_ID
+WHERE l.leave_ID IS NULL
+ORDER BY full_name;
+
+
+============================================================
+(b) List all departments that have no salary/bonus records
+    associated with them
+============================================================
+
+SELECT
+    jd.job_ID,
+    jd.dept_name,
+    jd.job_dept
+FROM job_department jd
+LEFT OUTER JOIN salary_bonus sb
+    ON jd.job_ID = sb.job_ID
+WHERE sb.salary_ID IS NULL
+ORDER BY jd.dept_name;
+
+
+============================================================
+Simple explanation
+============================================================
+
+1. LEFT OUTER JOIN keeps all records from the left table.
+2. If there is no match in the right table, Oracle shows NULL.
+3. WHERE l.leave_ID IS NULL finds employees with no leave.
+4. WHERE sb.salary_ID IS NULL finds departments with no salary/bonus records.

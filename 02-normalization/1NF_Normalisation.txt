@@ -1,0 +1,60 @@
+====================
+1NF NORMALISATION
+====================
+
+
+------------------------------------------------------------
+TABLE: QUALIFICATION_REQUIREMENTS
+------------------------------------------------------------
+
+Current columns:
+qual_ID, requirement
+
+1NF Status: Improvements required
+
+Explanation:
+
+
+Qualification may have many requirements. For example:
+- Bachelor degree
+- 2 years of experience
+- Oracle SQL knowledge
+
+If all of these requirements are stored in one requirement column as one list, then the table is not in 1NF because one column contains multiple values.
+
+Example of non-1NF data:
+qual_ID = 1
+requirement = 'Bachelor degree, 2 years experience, Oracle SQL knowledge'
+
+This violates 1NF because the requirement column contains a list of values.
+
+Recommended 1NF design:
+
+CREATE TABLE qualification_requirements (
+    requirement_ID NUMBER(10) PRIMARY KEY,
+    qual_ID        NUMBER(10) NOT NULL,
+    requirement    VARCHAR2(200) NOT NULL,
+
+    FOREIGN KEY (qual_ID)
+    REFERENCES qualification(qual_ID)
+);
+
+In this improved design, each requirement is stored in a separate row.
+
+Example:
+
+requirement_ID | qual_ID | requirement
+1              | 1       | Bachelor degree
+2              | 1       | 2 years of experience
+3              | 1       | Oracle SQL knowledge
+
+
+
+==================================================================
+Conclusion:
+==================================================================
+
+Qualification can have many requirements, the table should be changed by adding requirement_ID and storing each requirement in a separate row.
+
+
+Most of the seven tables already satisfy First Normal Form because they have primary keys, atomic values, and no repeating groups.

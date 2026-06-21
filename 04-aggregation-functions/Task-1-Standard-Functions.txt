@@ -1,0 +1,50 @@
+======================
+Aggregation Task 1 
+======================
+
+
+
+============================================================
+(a) Total number of employees in each department
+============================================================
+
+SELECT
+    jd.dept_name,
+    COUNT(e.emp_ID) AS total_employees
+FROM job_department jd
+LEFT JOIN employee e
+    ON jd.job_ID = e.job_ID
+GROUP BY jd.dept_name
+ORDER BY jd.dept_name;
+
+
+============================================================
+(b) Minimum, maximum, and average salary amount
+    across all salary records
+============================================================
+
+SELECT
+    MIN(amount) AS minimum_salary,
+    MAX(amount) AS maximum_salary,
+    ROUND(AVG(amount), 2) AS average_salary
+FROM salary_bonus;
+
+
+============================================================
+(c) Total bonus paid out across the entire company
+============================================================
+
+SELECT
+    SUM(bonus) AS total_bonus_from_salary_records
+FROM salary_bonus;
+
+
+
+============================================================
+Simple explanation
+============================================================
+1. COUNT() counts employees.
+2. MIN() finds the lowest salary.
+3. MAX() finds the highest salary.
+4. AVG() calculates the average salary.
+5. SUM() calculates the total bonus.

@@ -1,0 +1,98 @@
+================================
+Subquery Task 2 - IN, ALL, ANY
+================================
+
+
+
+============================================================
+(a) List all employees who work in departments that have at least
+    one salary record with a bonus greater than 500
+    Use IN
+============================================================
+
+SELECT
+    e.emp_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    jd.dept_name,
+    sb.amount AS salary_amount,
+    sb.bonus
+FROM employee e
+JOIN job_department jd
+    ON e.job_ID = jd.job_ID
+JOIN salary_bonus sb
+    ON e.salary_ID = sb.salary_ID
+WHERE e.job_ID IN
+(
+    SELECT job_ID
+    FROM salary_bonus
+    WHERE bonus > 500
+)
+ORDER BY jd.dept_name, full_name;
+
+
+============================================================
+(b) Find employees whose salary is greater than ALL salaries
+    in the Maintenance department
+    Use ALL
+============================================================
+
+SELECT
+    e.emp_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    jd.dept_name,
+    sb.amount AS salary_amount
+FROM employee e
+JOIN salary_bonus sb
+    ON e.salary_ID = sb.salary_ID
+JOIN job_department jd
+    ON e.job_ID = jd.job_ID
+WHERE sb.amount > ALL
+(
+    SELECT sb2.amount
+    FROM employee e2
+    JOIN salary_bonus sb2
+        ON e2.salary_ID = sb2.salary_ID
+    JOIN job_department jd2
+        ON e2.job_ID = jd2.job_ID
+    WHERE UPPER(jd2.dept_name) = 'MAINTENANCE'
+)
+ORDER BY sb.amount DESC;
+
+
+============================================================
+(c) Find employees whose salary is greater than ANY salary
+    in the HR department
+    Use ANY
+============================================================
+
+SELECT
+    e.emp_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    jd.dept_name,
+    sb.amount AS salary_amount
+FROM employee e
+JOIN salary_bonus sb
+    ON e.salary_ID = sb.salary_ID
+JOIN job_department jd
+    ON e.job_ID = jd.job_ID
+WHERE sb.amount > ANY
+(
+    SELECT sb2.amount
+    FROM employee e2
+    JOIN salary_bonus sb2
+        ON e2.salary_ID = sb2.salary_ID
+    JOIN job_department jd2
+        ON e2.job_ID = jd2.job_ID
+    WHERE UPPER(jd2.dept_name) = 'HR'
+)
+ORDER BY sb.amount DESC;
+
+
+============================================================
+Simple explanation
+============================================================
+
+1. IN means match one value from a list.
+2. ALL means the condition must be true for every value in the subquery.
+3. ANY means the condition must be true for at least one value in the subquery.
+4. UPPER() is used so department name matching is case-insensitive.

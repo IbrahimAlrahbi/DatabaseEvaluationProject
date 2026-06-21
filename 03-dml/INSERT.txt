@@ -1,0 +1,364 @@
+===============
+DML Seed Data 
+===============
+
+------------------------------------------------------------
+Create the normalised table
+------------------------------------------------------------
+
+CREATE TABLE qualification_requirements
+(
+    requirement_ID NUMBER(10) PRIMARY KEY,
+    qual_ID        NUMBER(10) NOT NULL,
+    requirement    VARCHAR2(200) NOT NULL,
+
+    FOREIGN KEY (qual_ID)
+    REFERENCES qualification(qual_ID)
+);
+
+
+
+============================================================
+DML INSERT STATEMENTS
+============================================================
+
+Important:
+Insert parent records first, then child records.
+
+Correct order:
+1. JOB_DEPARTMENT
+2. SALARY_BONUS
+3. EMPLOYEE
+4. QUALIFICATION
+5. QUALIFICATION_REQUIREMENTS
+6. LEAVE
+7. PAYROLL
+
+
+============================================================
+1. INSERT INTO JOB_DEPARTMENT
+============================================================
+
+INSERT INTO job_department
+(job_ID, job_dept, dept_name, description, min_salary, max_salary)
+VALUES
+(1, 'Engineer', 'Engineering', 'Responsible for technical and engineering operations', 3000, 9000);
+
+INSERT INTO job_department
+(job_ID, job_dept, dept_name, description, min_salary, max_salary)
+VALUES
+(2, 'HR Officer', 'HR', 'Responsible for recruitment and employee relations', 2500, 7000);
+
+INSERT INTO job_department
+(job_ID, job_dept, dept_name, description, min_salary, max_salary)
+VALUES
+(3, 'Accountant', 'Finance', 'Responsible for payroll, budgeting, and reporting', 2800, 8000);
+
+INSERT INTO job_department
+(job_ID, job_dept, dept_name, description, min_salary, max_salary)
+VALUES
+(4, 'Technician', 'Maintenance', 'Responsible for equipment and facility maintenance', 2200, 6500);
+
+INSERT INTO job_department
+(job_ID, job_dept, dept_name, description, min_salary, max_salary)
+VALUES
+(5, 'IT Support', 'IT', 'Responsible for systems, hardware, and user support', 2600, 7500);
+
+
+============================================================
+2. INSERT INTO SALARY_BONUS
+============================================================
+
+INSERT INTO salary_bonus
+(salary_ID, job_ID, amount, annual, bonus)
+VALUES
+(1, 1, 6000, 72000, 700);
+
+INSERT INTO salary_bonus
+(salary_ID, job_ID, amount, annual, bonus)
+VALUES
+(2, 2, 4000, 48000, 300);
+
+INSERT INTO salary_bonus
+(salary_ID, job_ID, amount, annual, bonus)
+VALUES
+(3, 3, 5500, 66000, 600);
+
+INSERT INTO salary_bonus
+(salary_ID, job_ID, amount, annual, bonus)
+VALUES
+(4, 4, 3500, 42000, 200);
+
+INSERT INTO salary_bonus
+(salary_ID, job_ID, amount, annual, bonus)
+VALUES
+(5, 5, 4800, 57600, 550);
+
+
+============================================================
+3. INSERT INTO EMPLOYEE
+============================================================
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(101, 1, 1, 'Ahmed', 'Al Busaidi', 'M', 32, 'AHMED.BUSAIDI@company.com', 'Pass123', 'Muscat', 'Al Khuwair', '91234501');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(102, 1, 1, 'Fatma', 'Al Harthy', 'F', 29, 'fatma.harthy@company.com', 'Pass123', 'Sohar', 'Al Hambar', '91234502');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(103, 2, 2, 'Mariam', 'Al Riyami', 'F', 35, 'MARIAM.RIYAMI@company.com', 'Pass123', 'Muscat', 'Azaiba', '91234503');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(104, 2, 2, 'Salim', 'Al Balushi', 'M', 27, 'salim.balushi@company.com', 'Pass123', 'Nizwa', 'Nizwa Center', '91234504');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(105, 3, 3, 'Khalid', 'Al Kindi', 'M', 41, 'KHALID.KINDI@company.com', 'Pass123', 'Muscat', 'Qurum', '91234505');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(106, 3, 3, 'Noor', 'Al Maqbali', 'F', 31, 'noor.maqbali@company.com', 'Pass123', 'Sohar', 'Al Falaj', '91234506');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(107, 4, 4, 'Hamood', 'Al Amri', 'M', 38, 'hamood.amri@company.com', 'Pass123', 'Ibri', 'Ibri Town', '91234507');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(108, 4, 4, 'Aisha', 'Al Hinai', 'F', 26, 'AISHA.HINAI@company.com', 'Pass123', 'Rustaq', 'Rustaq Center', '91234508');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(109, 5, 5, 'Omar', 'Al Rawahi', 'M', 33, 'omar.rawahi@company.com', 'Pass123', 'Muscat', 'Mawaleh', '91234509');
+
+INSERT INTO employee
+(emp_ID, job_ID, salary_ID, fname, lname, gender, age, emp_email, emp_pass, city, address, phone_number)
+VALUES
+(110, 5, 5, 'Layla', 'Al Zadjali', 'F', 24, 'layla.zadjali@company.com', 'Pass123', 'Sohar', 'Sohar Port Area', '91234510');
+
+
+============================================================
+4. INSERT INTO QUALIFICATION
+============================================================
+
+INSERT INTO qualification
+(qual_ID, emp_ID, position_name, date_in)
+VALUES
+(201, 101, 'Senior Engineer', DATE '2021-03-15');
+
+INSERT INTO qualification
+(qual_ID, emp_ID, position_name, date_in)
+VALUES
+(202, 103, 'HR Specialist', DATE '2020-06-10');
+
+INSERT INTO qualification
+(qual_ID, emp_ID, position_name, date_in)
+VALUES
+(203, 105, 'Senior Accountant', DATE '2019-01-20');
+
+INSERT INTO qualification
+(qual_ID, emp_ID, position_name, date_in)
+VALUES
+(204, 107, 'Maintenance Technician', DATE '2022-09-05');
+
+INSERT INTO qualification
+(qual_ID, emp_ID, position_name, date_in)
+VALUES
+(205, 109, 'IT Support Officer', DATE '2023-02-01');
+
+
+============================================================
+5. INSERT INTO NORMALISED QUALIFICATION_REQUIREMENTS
+============================================================
+
+-- Qualification 201: Senior Engineer
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(301, 201, 'Bachelor degree in Engineering');
+
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(302, 201, 'Minimum 3 years of engineering experience');
+
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(303, 201, 'Knowledge of technical drawings and safety procedures');
+
+
+-- Qualification 202: HR Specialist
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(304, 202, 'Bachelor degree in Human Resources');
+
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(305, 202, 'Knowledge of recruitment procedures');
+
+
+-- Qualification 203: Senior Accountant
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(306, 203, 'Bachelor degree in Accounting or Finance');
+
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(307, 203, 'Knowledge of Oracle SQL and payroll reporting');
+
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(308, 203, 'Minimum 4 years of accounting experience');
+
+
+-- Qualification 204: Maintenance Technician
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(309, 204, 'Diploma in Mechanical or Electrical Maintenance');
+
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(310, 204, 'Ability to inspect and repair production equipment');
+
+
+-- Qualification 205: IT Support Officer
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(311, 205, 'Diploma or degree in Information Technology');
+
+INSERT INTO qualification_requirements
+(requirement_ID, qual_ID, requirement)
+VALUES
+(312, 205, 'Knowledge of hardware, networks, and user support');
+
+
+============================================================
+6. INSERT INTO LEAVE
+============================================================
+
+INSERT INTO leave
+(leave_ID, emp_ID, start_date, end_date, reason)
+VALUES
+(401, 101, DATE '2025-01-10', DATE '2025-01-12', 'Annual leave');
+
+INSERT INTO leave
+(leave_ID, emp_ID, start_date, end_date, reason)
+VALUES
+(402, 103, DATE '2025-02-15', DATE '2025-02-16', 'Sick leave due to flu');
+
+INSERT INTO leave
+(leave_ID, emp_ID, start_date, end_date, reason)
+VALUES
+(403, 105, DATE '2025-03-20', DATE '2025-03-22', 'Family emergency');
+
+INSERT INTO leave
+(leave_ID, emp_ID, start_date, end_date, reason)
+VALUES
+(404, 107, DATE '2023-01-05', DATE '2023-01-06', 'Old sick leave record');
+
+INSERT INTO leave
+(leave_ID, emp_ID, start_date, end_date, reason)
+VALUES
+(405, 109, DATE '2025-04-12', DATE '2025-04-14', 'Training leave');
+
+
+============================================================
+7. INSERT INTO PAYROLL
+============================================================
+
+INSERT INTO payroll
+(payroll_ID, emp_ID, job_ID, salary_ID, report, payroll_date, total_amount)
+VALUES
+(501, 101, 1, 1, 'January payroll processed', DATE '2025-01-31', 6700);
+
+INSERT INTO payroll
+(payroll_ID, emp_ID, job_ID, salary_ID, report, payroll_date, total_amount)
+VALUES
+(502, 102, 1, 1, 'January payroll processed', DATE '2025-01-31', 6700);
+
+INSERT INTO payroll
+(payroll_ID, emp_ID, job_ID, salary_ID, report, payroll_date, total_amount)
+VALUES
+(503, 103, 2, 2, 'January payroll processed', DATE '2025-01-31', 4300);
+
+INSERT INTO payroll
+(payroll_ID, emp_ID, job_ID, salary_ID, report, payroll_date, total_amount)
+VALUES
+(504, 105, 3, 3, 'February payroll processed', DATE '2025-02-28', 6100);
+
+INSERT INTO payroll
+(payroll_ID, emp_ID, job_ID, salary_ID, report, payroll_date, total_amount)
+VALUES
+(505, 106, 3, 3, 'February payroll processed', DATE '2025-02-28', 6100);
+
+INSERT INTO payroll
+(payroll_ID, emp_ID, job_ID, salary_ID, report, payroll_date, total_amount)
+VALUES
+(506, 107, 4, 4, 'March payroll processed', DATE '2025-03-31', 3700);
+
+INSERT INTO payroll
+(payroll_ID, emp_ID, job_ID, salary_ID, report, payroll_date, total_amount)
+VALUES
+(507, 109, 5, 5, 'March payroll processed', DATE '2025-03-31', 5350);
+
+INSERT INTO payroll
+(payroll_ID, emp_ID, job_ID, salary_ID, report, payroll_date, total_amount)
+VALUES
+(508, 110, 5, 5, 'March payroll processed', DATE '2025-03-31', 5350);
+
+
+============================================================
+FINAL COMMIT TO SAVE 
+============================================================
+
+COMMIT;
+
+
+============================================================
+CHECK COUNTS AFTER INSERT
+============================================================
+
+SELECT COUNT(*) AS total_departments
+FROM job_department;
+
+SELECT COUNT(*) AS total_salary_bonus_records
+FROM salary_bonus;
+
+SELECT COUNT(*) AS total_employees
+FROM employee;
+
+SELECT COUNT(*) AS total_qualifications
+FROM qualification;
+
+SELECT COUNT(*) AS total_qualification_requirements
+FROM qualification_requirements;
+
+SELECT COUNT(*) AS total_leave_records
+FROM leave;
+
+SELECT COUNT(*) AS total_payroll_records
+FROM payroll;
+
+

@@ -1,0 +1,220 @@
+==================================
+Stored Procedures and Functions
+==================================
+
+
+
+
+============================================================
+PREPARATION: EMPLOYEE SEQUENCE
+============================================================
+
+
+CREATE SEQUENCE EMP_SEQ
+START WITH 1001
+INCREMENT BY 1
+NOCACHE;
+
+
+============================================================
+STORED PROCEDURE TASK 1
+============================================================
+
+Create a stored procedure named SP_ADD_EMPLOYEE.
+
+Requirements:
+- IN parameters for all EMPLOYEE columns except emp_ID.
+- emp_ID is auto-generated from EMP_SEQ.
+- Validate that emp_email is not already in use.
+- Raise an exception if duplicate.
+- Insert the new employee.
+- Print confirmation message using DBMS_OUTPUT.PUT_LINE.
+
+
+------------------------------------------------------------
+Create Procedure: SP_ADD_EMPLOYEE
+------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE SP_ADD_EMPLOYEE
+(
+    p_job_ID        IN employee.job_ID%TYPE,
+    p_salary_ID     IN employee.salary_ID%TYPE,
+    p_fname         IN employee.fname%TYPE,
+    p_lname         IN employee.lname%TYPE,
+    p_gender        IN employee.gender%TYPE,
+    p_age           IN employee.age%TYPE,
+    p_emp_email     IN employee.emp_email%TYPE,
+    p_emp_pass      IN employee.emp_pass%TYPE,
+    p_city          IN employee.city%TYPE,
+    p_address       IN employee.address%TYPE,
+    p_phone_number  IN employee.phone_number%TYPE
+)
+AS
+    v_email_count NUMBER;
+    v_new_emp_ID  NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO v_email_count
+    FROM employee
+    WHERE LOWER(emp_email) = LOWER(p_emp_email);
+
+    IF v_email_count > 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'This employee email is already in use.');
+    END IF;
+
+    v_new_emp_ID := EMP_SEQ.NEXTVAL;
+
+    INSERT INTO employee
+    (
+        emp_ID,
+        job_ID,
+        salary_ID,
+        fname,
+        lname,
+        gender,
+        age,
+        emp_email,
+        emp_pass,
+        city,
+        address,
+        phone_number
+    )
+    VALUES
+    (
+        v_new_emp_ID,
+        p_job_ID,
+        p_salary_ID,
+        p_fname,
+        p_lname,
+        p_gender,
+        p_age,
+        LOWER(p_emp_email),
+        p_emp_pass,
+        p_city,
+        p_address,
+        p_phone_number
+    );
+
+    DBMS_OUTPUT.PUT_LINE('Employee added successfully. New Employee ID: ' || v_new_emp_ID);
+END;
+/
+
+
+------------------------------------------------------------
+Test 1: Call procedure first time
+------------------------------------------------------------
+
+BEGIN
+    SP_ADD_EMPLOYEE
+    (
+        p_job_ID       => 1,
+        p_salary_ID    => 1,
+        p_fname        => 'Ali',
+        p_lname        => 'Al Balushi',
+        p_gender       => 'M',
+        p_age          => 29,
+        p_emp_email    => 'ali.test@example.com',
+        p_emp_pass     => 'Pass123',
+        p_city         => 'Muscat',
+        p_address      => 'Al Khuwair',
+        p_phone_number => '91234567'
+    );
+END;
+/
+
+
+------------------------------------------------------------
+Test 2: Call procedure again with same email
+------------------------------------------------------------
+
+BEGIN
+    SP_ADD_EMPLOYEE
+    (
+        p_job_ID       => 1,
+        p_salary_ID    => 1,
+        p_fname        => 'Ali',
+        p_lname        => 'Duplicate',
+        p_gender       => 'M',
+        p_age          => 30,
+        p_emp_email    => 'ali.test@example.com',
+        p_emp_pass     => 'Pass123',
+        p_city         => 'Muscat',
+        p_address      => 'Al Khuwair',
+        p_phone_number => '91234567'
+    );
+END;
+/
+
+
+------------------------------------------------------------
+Expected error
+------------------------------------------------------------
+
+-- ORA-20001: This employee email is already in use.
+
+
+============================================================
+FUNCTION TASK 2
+============================================================
+
+Create a function named FN_NET_SALARY.
+
+Input:
+emp_ID
+
+Return:
+Net salary as NUMBER
+
+Formula:
+amount + bonus
+
+
+------------------------------------------------------------
+Create Function: FN_NET_SALARY
+------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION FN_NET_SALARY
+(
+    p_emp_ID IN employee.emp_ID%TYPE
+)
+RETURN NUMBER
+AS
+    v_net_salary NUMBER;
+BEGIN
+    SELECT sb.amount + sb.bonus
+    INTO v_net_salary
+    FROM employee e
+    JOIN salary_bonus sb
+        ON e.salary_ID = sb.salary_ID
+    WHERE e.emp_ID = p_emp_ID;
+
+    RETURN v_net_salary;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 0;
+END;
+/
+
+
+------------------------------------------------------------
+Use the function in a SELECT query
+------------------------------------------------------------
+
+SELECT
+    e.emp_ID,
+    e.fname || ' ' || e.lname AS full_name,
+    FN_NET_SALARY(e.emp_ID) AS net_salary
+FROM employee e
+ORDER BY FN_NET_SALARY(e.emp_ID) DESC;
+
+
+============================================================
+Simple explanation
+============================================================
+
+1. A procedure performs an action.
+2. SP_ADD_EMPLOYEE inserts a new employee.
+3. The procedure checks for duplicate email before insert.
+4. A function returns a value.
+5. FN_NET_SALARY returns amount + bonus for an employee.

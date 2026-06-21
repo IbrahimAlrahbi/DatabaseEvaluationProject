@@ -1,0 +1,77 @@
+=========================
+UPDATE Statements
+=========================
+
+
+
+============================================================
+(a) Give a 10% salary increase to all employees
+    in the Engineering department
+============================================================
+
+UPDATE salary_bonus sb
+SET sb.amount = sb.amount * 1.10,
+    sb.annual = sb.annual * 1.10
+WHERE sb.job_ID IN
+(
+    SELECT jd.job_ID
+    FROM job_department jd
+    WHERE UPPER(jd.dept_name) = 'ENGINEERING'
+);
+
+
+------------------------------------------------------------
+Verify the result
+------------------------------------------------------------
+
+SELECT
+    jd.dept_name,
+    sb.salary_ID,
+    sb.amount,
+    sb.annual,
+    sb.bonus
+FROM salary_bonus sb
+JOIN job_department jd
+    ON sb.job_ID = jd.job_ID
+WHERE UPPER(jd.dept_name) = 'ENGINEERING';
+
+
+============================================================
+(b) Update emp_email of all employees to lowercase
+    using Oracle LOWER() function
+============================================================
+
+UPDATE employee
+SET emp_email = LOWER(emp_email);
+
+
+------------------------------------------------------------
+Verify the result
+------------------------------------------------------------
+
+SELECT
+    emp_ID,
+    fname,
+    lname,
+    emp_email
+FROM employee
+ORDER BY emp_ID;
+
+
+============================================================
+(c) Set salary_range in JOB_DEPARTMENT to 'REVISED'
+    for any department whose average total payroll exceeds 8000
+============================================================
+
+salary_range does not exist, run this first:
+
+ALTER TABLE job_department
+ADD salary_range VARCHAR2(20);
+
+
+============================================================
+Simple explanation
+============================================================
+
+1. Part (a) updates salary_bonus because employee salary amount is stored there.
+2. Part (b) uses LOWER() to convert all emails to lowercase.

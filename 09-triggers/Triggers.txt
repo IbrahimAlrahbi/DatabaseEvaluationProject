@@ -1,0 +1,247 @@
+===========
+Triggers
+===========
+
+
+---------------------------------------------
+Error Faced With the Privilege 
+---------------------------------------------
+
+Solve it using the following commands in SQLPLUS:
+
+ALTER SESSION SET CONTAINER = ORCLPDB;
+
+SHOW CON_NAME;
+
+GRANT CREATE TRIGGER TO 'username';
+
+
+
+============================================================
+TRIGGER TASK 1
+============================================================
+
+Create a BEFORE INSERT trigger named TRG_EMP_ID on EMPLOYEE.
+If inserted emp_ID is NULL, populate it from EMP_SEQ.NEXTVAL.
+
+
+------------------------------------------------------------
+Preparation: Create EMP_SEQ
+------------------------------------------------------------
+
+-- If already created in the procedure task, not run it again.
+
+CREATE SEQUENCE EMP_SEQ
+START WITH 1001
+INCREMENT BY 1
+NOCACHE;
+
+
+------------------------------------------------------------
+Create Trigger: TRG_EMP_ID
+------------------------------------------------------------
+
+CREATE OR REPLACE TRIGGER TRG_EMP_ID
+BEFORE INSERT ON employee
+FOR EACH ROW
+BEGIN
+    IF :NEW.emp_ID IS NULL THEN
+        :NEW.emp_ID := EMP_SEQ.NEXTVAL;
+    END IF;
+END;
+/
+
+
+
+------------------------------------------------------------
+Test: Insert employee without specifying emp_ID
+------------------------------------------------------------
+
+INSERT INTO employee
+(
+    job_ID,
+    salary_ID,
+    fname,
+    lname,
+    gender,
+    age,
+    emp_email,
+    emp_pass,
+    city,
+    address,
+    phone_number
+)
+VALUES
+(
+    1,
+    1,
+    'Salim',
+    'Al Riyami',
+    'M',
+    25,
+    'salim.trigger@example.com',
+    'Pass123',
+    'Sohar',
+    'Sohar City',
+    '92345678'
+);
+
+
+------------------------------------------------------------
+Verify emp_ID was auto-assigned
+------------------------------------------------------------
+
+SELECT
+    emp_ID,
+    fname,
+    lname,
+    emp_email
+FROM employee
+WHERE emp_email = 'salim.trigger@example.com';
+
+
+============================================================
+TRIGGER TASK 2
+============================================================
+
+Create EMPLOYEE_LOG table.
+Create AFTER INSERT trigger named TRG_EMP_WELCOME_LOG.
+
+Requirement:
+Whenever a new employee is added, insert a log row with:
+action = 'NEW HIRE'
+
+
+------------------------------------------------------------
+Create Table: EMPLOYEE_LOG
+------------------------------------------------------------
+
+CREATE TABLE employee_log
+(
+    log_id        NUMBER(10) PRIMARY KEY,
+    emp_id        NUMBER(10),
+    action        VARCHAR2(100) NOT NULL,
+    log_timestamp TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL
+);
+
+
+------------------------------------------------------------
+Create Sequence: EMPLOYEE_LOG_SEQ
+------------------------------------------------------------
+
+CREATE SEQUENCE EMPLOYEE_LOG_SEQ
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+
+------------------------------------------------------------
+Create Trigger: TRG_EMP_WELCOME_LOG
+------------------------------------------------------------
+
+CREATE OR REPLACE TRIGGER TRG_EMP_WELCOME_LOG
+AFTER INSERT ON employee
+FOR EACH ROW
+BEGIN
+    INSERT INTO employee_log
+    (
+        log_id,
+        emp_id,
+        action,
+        log_timestamp
+    )
+    VALUES
+    (
+        EMPLOYEE_LOG_SEQ.NEXTVAL,
+        :NEW.emp_ID,
+        'NEW HIRE',
+        SYSTIMESTAMP
+    );
+END;
+/
+
+
+------------------------------------------------------------
+Test: Insert 2 employees
+------------------------------------------------------------
+
+INSERT INTO employee
+(
+    job_ID,
+    salary_ID,
+    fname,
+    lname,
+    gender,
+    age,
+    emp_email,
+    emp_pass,
+    city,
+    address,
+    phone_number
+)
+VALUES
+(
+    2,
+    2,
+    'Mohammed',
+    'Al Hinai',
+    'M',
+    34,
+    'mohammed.log@example.com',
+    'Pass123',
+    'Muscat',
+    'Azaiba',
+    '93456789'
+);
+
+INSERT INTO employee
+(
+    job_ID,
+    salary_ID,
+    fname,
+    lname,
+    gender,
+    age,
+    emp_email,
+    emp_pass,
+    city,
+    address,
+    phone_number
+)
+VALUES
+(
+    3,
+    3,
+    'Muna',
+    'Al Kindi',
+    'F',
+    31,
+    'muna.log@example.com',
+    'Pass123',
+    'Nizwa',
+    'Nizwa Center',
+    '94567890'
+);
+
+
+------------------------------------------------------------
+Query EMPLOYEE_LOG
+------------------------------------------------------------
+
+SELECT
+    log_id,
+    emp_id,
+    action,
+    log_timestamp
+FROM employee_log
+ORDER BY log_id;
+
+
+============================================================
+Simple explanation
+============================================================
+
+1. BEFORE INSERT trigger runs before the row is saved.
+2. TRG_EMP_ID fills emp_ID automatically if it is NULL.
+3. AFTER INSERT trigger runs after the row is saved.
+4. TRG_EMP_WELCOME_LOG records a new hire in EMPLOYEE_LOG.
